@@ -55,10 +55,14 @@ Current scheme [here](./scheme.md)
 
 Dynamicly set through [specs.vh](./specs.vh)
 
-## TODO
+## MINOR TODO
+
+- [ ] better testing, because ASSERT is for single check right now
+- [ ] better file structure
+
+## MAJOR TODO
 
 - [ ] more tests
 - [ ] more instructions to support
 - [ ] dynamic opcode size
 - [ ] other cpu related components
-- [ ] better testing, because ASSERT is for single check right now
