@@ -57,7 +57,7 @@ Current scheme [here](./scheme.md)
 
 ### WORD size
 
-Dynamicly set through [specs.vh](./specs.vh)
+Dynamicly set through [specs](./src/specs.vh)
 
 ## MINOR TODO
 
