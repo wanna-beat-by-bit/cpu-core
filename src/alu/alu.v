@@ -19,7 +19,7 @@ wire [WIDTH+1-1:0] extended_sum = {1'b0, i_a} + {1'b0, i_b};
 wire [WIDTH+1-1:0] extended_sub = {1'b0, i_a} - {1'b0, i_b};
 
 assign o_zero = (r_result == 0);
-assign o_cf = (i_opcode == `OP_SUM)  ? extended_sum[WIDTH]   :  // TODO: Find out how 8 conflicts with WORD size.
+assign o_cf = (i_opcode == `OP_SUM)  ? extended_sum[WIDTH]   :  
               (i_opcode == `OP_SUB)  ? (i_a < i_b)       : 1'b0;
 assign o_result = r_result;
 
