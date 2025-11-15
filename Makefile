@@ -1,4 +1,4 @@
-.PHONY: dev-build dev subdir_src test_all test_alu context
+.PHONY: dev-build dev 
 
 dev-build:
 	docker compose build veridev
@@ -6,14 +6,8 @@ dev-build:
 dev:
 	docker compose up veridev
 
-test_all:
-	$(MAKE) -C src test_all
+# delegation
+.PHONY: test_all test_alu context context_alu clean
 
-test_alu: test_alu
-	$(MAKE) -C src test_alu
-
-context:
-	$(MAKE) -C src context
-
-clean:
-	$(MAKE) -C src clean
+test_all test_alu context context_alu clean:
+	$(MAKE) -C src $@

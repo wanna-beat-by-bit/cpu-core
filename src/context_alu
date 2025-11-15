@@ -1,0 +1,156 @@
+1. alu.v
+```verilog
+`timescale 1ns/1ps
+`include "specs.vh"
+
+module alu #(
+    parameter WIDTH = `WORD,
+    parameter OP_WIDTH = `OP_WIDTH
+)(
+    input wire [WIDTH-1:0] i_a,
+    input wire [WIDTH-1:0] i_b,
+    input wire [OP_WIDTH-1:0] i_opcode,
+
+    output wire [WIDTH-1:0] o_result,
+    output wire o_zero,
+    output wire o_cf
+);
+
+reg [WIDTH-1:0] r_result;
+wire [WIDTH+1-1:0] extended_sum = {1'b0, i_a} + {1'b0, i_b};
+wire [WIDTH+1-1:0] extended_sub = {1'b0, i_a} - {1'b0, i_b};
+
+assign o_zero = (r_result == 0);
+assign o_cf = (i_opcode == `OP_SUM)  ? extended_sum[WIDTH]   :  
+              (i_opcode == `OP_SUB)  ? (i_a < i_b)       : 1'b0;
+assign o_result = r_result;
+
+always @(*) begin
+    case(i_opcode)
+        `OP_SUM: r_result = i_a + i_b;
+        `OP_SUB: r_result = i_a - i_b;
+        `OP_AND: r_result = i_a & i_b;
+        `OP_XOR: r_result = i_a ^ i_b;
+        default: r_result = 0;
+    endcase
+end
+
+endmodule
+```
+
+2. alu_test.v
+```verilog
+`timescale 1ns/1ps
+`include "specs.vh"
+`include "tools.v"
+
+module test_alu #(
+    parameter WIDTH = `WORD,
+    parameter OP_WIDTH = `OP_WIDTH
+);
+
+reg [WIDTH-1:0] t_a, t_b;
+reg [OP_WIDTH-1:0] t_opcode;
+
+wire [WIDTH-1:0] o_result;
+wire o_zero;
+wire o_cf;
+
+// Инстанцирование тестируемого модуля
+alu alu_inst (
+    .i_a(t_a),
+    .i_b(t_b),
+    .i_opcode(t_opcode),
+    .o_result(o_result),
+    .o_zero(o_zero),
+    .o_cf(o_cf)
+);
+
+task automatic tick;
+    input int tick_amount;
+    begin
+        repeat(tick_amount) #5;
+    end
+endtask
+
+task automatic test_op;
+    input [WIDTH-1:0] a, b, exp_res;
+    input [OP_WIDTH-1:0] op;
+    input       exp_cf;
+    begin
+        t_a = a; t_b = b; t_opcode = op;
+        tick(1);
+         `ASSERT(
+             (o_result === exp_res) && (o_cf === exp_cf) && (o_zero === (exp_res == 0)),
+             $sformatf("ALU: %b %s %b", a, opname(op), b),
+             $sformatf("got: res=%b, cf=%b, zero=%b | exp: res=%b, cf=%b, zero=%b",
+                 o_result, o_cf, o_zero, exp_res, exp_cf, (exp_res==0))
+         );
+    end
+endtask
+
+initial begin
+    test_op(3, 4, 7, `OP_SUM, 0);
+    test_op(255, 1, 0, `OP_SUM, 1); // carry due to overflow
+    test_op(5, 3, 2, `OP_SUB, 0);
+    test_op(3, 5, 254, `OP_SUB, 1); // assert CF=1
+    test_op(8'b11110000, 8'b10101010, 8'b10100000, `OP_AND, 0);
+    test_op(8'b11110000, 8'b10101010, 8'b01011010, `OP_XOR, 0);
+    test_op(5, 5, 0, `OP_SUB, 1); // assert zero=1 || CF=1
+
+    $finish;
+end
+
+endmodule
+```
+
+3. specs.vh
+```verilog
+`ifndef SPECS_VH
+`define SPECS_VH
+
+// supported opcodes
+`define OP_SUM  3'b000
+`define OP_SUB  3'b001
+`define OP_AND  3'b010
+`define OP_XOR  3'b011
+`define OP_NOP  3'b100
+
+// supported cpu bit width
+`define WORD 8
+`define OP_WIDTH 3
+
+// opcode map
+function string opname;
+    input [`OP_WIDTH-1:0] op;
+    case(op)
+        `OP_SUM: opname = "SUM";
+        `OP_SUB: opname = "SUB";
+        `OP_AND: opname = "AND";
+        `OP_XOR: opname = "XOR";
+        default: opname = "???";
+    endcase
+endfunction
+
+`endif // SPECS_VH
+```
+
+4. tools.v
+```verilog
+`define ASSERT(condition, name, message) \
+    if (condition) begin \
+        $display("✅ PASS TEST '%s'", name); \
+    end else begin \
+        $display("❌ ERROR TEST '%s': %s", name, message); \
+    end
+
+// `define REQUIRE(condition, message) \
+//     if (condition) begin \
+//         $display("✅ PASS: %s", message); \
+//     end else begin \
+//         $display("🛑 CRITICAL ERROR: %s", message); \
+//         $display("🛑 Завершение симуляции..."); \
+//         $finish; \
+//     end
+```
+
