@@ -9,7 +9,8 @@ dev:
 	docker compose up veridev
 
 # delegation
-.PHONY: test_all test_alu context context_alu clean
+DELEGATES = test_all test_alu test_rf context context_alu clean
+.PHONY: $(DELEGATES)
 
-test_all test_alu context context_alu clean:
+$(DELEGATES):
 	$(MAKE) -C src $@

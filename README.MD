@@ -31,6 +31,8 @@ make dev
 Then inside created container:
 cd app
 make test_all
+make test_rf
+make test_alu
 ```
 
 ## 🖼️ Current ALU Overview 
@@ -59,14 +61,9 @@ make test_all
 
 **WORD** size Dynamicly set through [specs](./src/specs.vh)
 
-## MINOR TODO
-
-- [ ] better testing, because ASSERT is for single check right now
-- [ ] better file structure
-
 ## MAJOR TODO
 
 - [ ] more tests
 - [ ] more instructions to support
-- [ ] dynamic opcode size
-- [ ] other cpu related components
+- [ ] control unit
+- [x] register file
