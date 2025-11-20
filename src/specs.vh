@@ -9,8 +9,13 @@
 `define OP_NOP  3'b100
 
 // supported cpu bit width
-`define WORD 8
+`define WORD 32
+
 `define OP_WIDTH 3
+
+`define REG_ADDRESS_SPACE 5
+
+`define INS_ADDRESS_SPACE = 4
 
 // opcode map
 function string opname;

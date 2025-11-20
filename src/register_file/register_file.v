@@ -1,11 +1,14 @@
 `timescale 1ns/1ps
 `include "specs.vh"
 
+// specs:
+// - 32 registers (inspired by RISC-V)
+// - 5 bit address space (log2(32))
 
 module register_file #(
-    parameter WIDTH = 4*`WORD,
+    parameter WIDTH = `WORD,
     parameter ZERO_REGISTER = 5'b00000,
-    parameter ADDR_SPACE = 5,
+    parameter ADDR_SPACE = `REG_ADDRESS_SPACE,
     parameter REG_AMOUNT = 32
 )(
     input wire clk,

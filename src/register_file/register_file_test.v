@@ -3,7 +3,7 @@
 `include "tools.v"
 
 module rf_test #(
-    parameter WIDTH = 4*`WORD,
+    parameter WIDTH = `WORD,
     parameter ZERO_REGISTER = 5'b00000,
     parameter ADDR_SPACE = 5,
     parameter REG_AMOUNT = 32

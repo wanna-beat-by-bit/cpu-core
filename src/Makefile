@@ -3,7 +3,7 @@ MAKEFLAGS += --warn-undefined-variables
 LIB = specs.vh tools.v
 SOURCE_ALU = ./alu/alu.v ./alu/alu_test.v
 SRC_RF = ./register_file/register_file.v ./register_file/register_file_test.v
-SOURCE_FILES = $(SOURCE_ALU) $(SRC_RF)  # pipeline.v test.v  
+SOURCE_FILES = $(SOURCE_ALU) $(SRC_RF) rom.v pc.v cpu.v control_unit.v # pipeline.v test.v  
 
 define context_rule
 	./compose.sh $1 $(LIB) -o $2

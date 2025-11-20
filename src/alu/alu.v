@@ -29,6 +29,7 @@ always_comb begin
         `OP_SUB: r_result = i_a - i_b;
         `OP_AND: r_result = i_a & i_b;
         `OP_XOR: r_result = i_a ^ i_b;
+        `OP_NOP: r_result = i_a;  
         default: r_result = 0;
     endcase
 end
